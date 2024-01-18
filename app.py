@@ -1,39 +1,12 @@
-# app.py
 import psycopg2
-from db import DATABASE_URL
+from models import get_all_questions
+from ui import display_menu, handle_menu
 
 
 def main():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-
     while True:
-        print("\n1. View all questions")
-        print("2. View a specific question and its answers")
-        print("3. Exit")
-
-        choice = input("Enter your choice: ")
-
-        if choice == "1":
-            cursor.execute("SELECT * FROM questions;")
-            questions = cursor.fetchall()
-            display_questions_with_answers(questions)
-
-        elif choice == "2":
-            question_id = int(input("Enter the question ID: "))
-            cursor.execute("SELECT * FROM questions WHERE id = %(question_id)s;", ({'question_id': question_id}))
-            question = cursor.fetchone()
-            cursor.execute("SELECT * FROM answers WHERE id = %(question_id)s;", ({'question_id': question_id}))
-            answers = cursor.fetchall()
-            if question:
-                display_question_with_answers(question, answers)
-            else:
-                print("Question  not found.")
-        elif choice == "3":
-            break
-
-    cursor.close()
-    conn.close()
+        display_menu()
+        handle_menu()
 
 
 def display_questions_with_answers(questions):
